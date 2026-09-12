@@ -32,7 +32,7 @@ export const Route = createFileRoute("/mechanic/")({
       { property: "og:description", content: "Dispatch alerts, navigation and earnings." },
     ],
   }),
-  component: MechanicPortal;
+  component: MechanicPortal,
 });
 
 const FLOW: { stage: Stage; label: string }[] = [

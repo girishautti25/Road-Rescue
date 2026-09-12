@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as DriverEmergencyRouteImport } from './routes/driver.emergency'
 import { Route as KitAccessPodIdRouteImport } from './routes/kit-access.$podId'
+import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
 import { Route as DriverRequestIdRouteImport } from './routes/driver.request.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,6 +33,11 @@ const AboutRoute = AboutRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -53,6 +60,11 @@ const KitAccessPodIdRoute = KitAccessPodIdRouteImport.update({
   path: '/kit-access/$podId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MechanicIndexRoute = MechanicIndexRouteImport.update({
+  id: '/mechanic/',
+  path: '/mechanic/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DriverRequestIdRoute = DriverRequestIdRouteImport.update({
   id: '/driver/request/$id',
   path: '/driver/request/$id',
@@ -63,20 +75,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
   '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver/': typeof DriverIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
   '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver': typeof DriverIndexRoute
+  '/mechanic': typeof MechanicIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesById {
@@ -84,10 +100,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
   '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver/': typeof DriverIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRouteTypes {
@@ -96,30 +114,36 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/demo'
     | '/how-it-works'
     | '/driver/emergency'
     | '/kit-access/$podId'
     | '/driver/'
+    | '/mechanic/'
     | '/driver/request/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
+    | '/demo'
     | '/how-it-works'
     | '/driver/emergency'
     | '/kit-access/$podId'
     | '/driver'
+    | '/mechanic'
     | '/driver/request/$id'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
+    | '/demo'
     | '/how-it-works'
     | '/driver/emergency'
     | '/kit-access/$podId'
     | '/driver/'
+    | '/mechanic/'
     | '/driver/request/$id'
   fileRoutesById: FileRoutesById
 }
@@ -127,10 +151,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  DemoRoute: typeof DemoRoute
   HowItWorksRoute: typeof HowItWorksRoute
   DriverEmergencyRoute: typeof DriverEmergencyRoute
   KitAccessPodIdRoute: typeof KitAccessPodIdRoute
   DriverIndexRoute: typeof DriverIndexRoute
+  MechanicIndexRoute: typeof MechanicIndexRoute
   DriverRequestIdRoute: typeof DriverRequestIdRoute
 }
 
@@ -155,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -185,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KitAccessPodIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mechanic/': {
+      id: '/mechanic/'
+      path: '/mechanic'
+      fullPath: '/mechanic/'
+      preLoaderRoute: typeof MechanicIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/driver/request/$id': {
       id: '/driver/request/$id'
       path: '/driver/request/$id'
@@ -199,10 +239,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  DemoRoute: DemoRoute,
   HowItWorksRoute: HowItWorksRoute,
   DriverEmergencyRoute: DriverEmergencyRoute,
   KitAccessPodIdRoute: KitAccessPodIdRoute,
   DriverIndexRoute: DriverIndexRoute,
+  MechanicIndexRoute: MechanicIndexRoute,
   DriverRequestIdRoute: DriverRequestIdRoute,
 }
 export const routeTree = rootRouteImport
