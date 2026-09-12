@@ -400,26 +400,3 @@ export function useEmergency(id: string) {
   const { emergencies } = useRoadRescue();
   return emergencies.find((e) => e.id === id) ?? null;
 }
-
-export const STAGE_ORDER_PRIMARY: Stage[] = [
-  "CREATED",
-  "ACKNOWLEDGED",
-  "FINDING_STATION",
-  "POD_ASSIGNED",
-  "POD_DISPATCHED",
-  "POD_MOVING",
-  "POD_ARRIVED",
-  "WAITING_FOR_ACCESS",
-  "ACCESS_GRANTED",
-  "KIT_IN_USE",
-];
-
-export const STAGE_ORDER_MECHANIC: Stage[] = [
-  "UNABLE_TO_REPAIR",
-  "MECHANIC_SEARCHING",
-  "MECHANIC_ASSIGNED",
-  "MECHANIC_EN_ROUTE",
-  "MECHANIC_ARRIVED",
-  "REPAIR_IN_PROGRESS",
-  "COMPLETED",
-];

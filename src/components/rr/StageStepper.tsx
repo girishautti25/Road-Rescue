@@ -1,6 +1,6 @@
 import { Check, Loader2 } from "lucide-react";
 import { STAGE_LABELS, type Emergency, type Stage } from "@/lib/roadrescue/types";
-import { STAGE_ORDER_MECHANIC, STAGE_ORDER_PRIMARY } from "@/lib/roadrescue/store";
+import { STAGE_ORDER_MECHANIC, STAGE_ORDER_PRIMARY } from "@/lib/roadrescue/stages";
 import { cn } from "@/lib/utils";
 
 export function stagesFor(e: Emergency): Stage[] {
