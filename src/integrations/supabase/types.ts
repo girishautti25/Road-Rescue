@@ -156,9 +156,12 @@ export type Database = {
           pod_progress: number
           problem_type: string
           source: string
+          stage: string
           station_id: string | null
           status: string
+          timeline: Json
           updated_at: string
+          vehicle_id: string | null
           vehicle_label: string
         }
         Insert: {
@@ -183,9 +186,12 @@ export type Database = {
           pod_progress?: number
           problem_type: string
           source?: string
+          stage?: string
           station_id?: string | null
           status?: string
+          timeline?: Json
           updated_at?: string
+          vehicle_id?: string | null
           vehicle_label: string
         }
         Update: {
@@ -210,9 +216,12 @@ export type Database = {
           pod_progress?: number
           problem_type?: string
           source?: string
+          stage?: string
           station_id?: string | null
           status?: string
+          timeline?: Json
           updated_at?: string
+          vehicle_id?: string | null
           vehicle_label?: string
         }
         Relationships: [
@@ -601,6 +610,8 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          station_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -609,6 +620,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          station_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -617,6 +630,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          station_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -733,6 +748,18 @@ export type Database = {
         Returns: boolean
       }
       next_request_code: { Args: never; Returns: string }
+      dispatch_emergency_pod: {
+        Args: { p_request_id: string }
+        Returns: Json
+      }
+      assign_emergency_mechanic: {
+        Args: { p_request_id: string }
+        Returns: Json
+      }
+      advance_emergency_stage: {
+        Args: { p_request_id: string; p_target_stage: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role:

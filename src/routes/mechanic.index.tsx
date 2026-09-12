@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/rr/Shell";
@@ -32,7 +33,11 @@ export const Route = createFileRoute("/mechanic/")({
       { property: "og:description", content: "Dispatch alerts, navigation and earnings." },
     ],
   }),
-  component: MechanicPortal,
+  component: () => (
+    <ProtectedRoute allowedRoles={["MECHANIC", "ADMIN", "SUPER_ADMIN"]}>
+      <MechanicPortal />
+    </ProtectedRoute>
+  ),
 });
 
 const FLOW: { stage: Stage; label: string }[] = [

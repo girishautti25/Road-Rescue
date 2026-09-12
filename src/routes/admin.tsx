@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { AppShell } from "@/components/rr/Shell";
 import { useRoadRescue } from "@/lib/roadrescue/store";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
@@ -19,6 +20,14 @@ const TABS = [
 ] as const;
 
 function AdminLayout() {
+  return (
+    <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+      <AdminDashboardContent />
+    </ProtectedRoute>
+  );
+}
+
+function AdminDashboardContent() {
   const { emergencyStop, setEmergencyStop } = useRoadRescue();
   return (
     <AppShell

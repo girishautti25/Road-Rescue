@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BatteryFull,
@@ -19,7 +20,17 @@ import { AppShell } from "@/components/rr/Shell";
 import { HighwayMap } from "@/components/rr/HighwayMap";
 import { StageBadge, StageStepper } from "@/components/rr/StageStepper";
 import { useRoadRescue } from "@/lib/roadrescue/store";
-import { PROBLEM_TYPES } from "@/lib/roadrescue/types";
+import { PROBLEM_TYPES, type Stage } from "@/lib/roadrescue/types";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchEmergencyRequestById,
+  updateEmergencyRequest,
+  advanceEmergencyStage,
+  assignEmergencyMechanic,
+  type EmergencyRequestRow,
+} from "@/services/driverService";
 
 export const Route = createFileRoute("/driver/request/$id")({
   head: () => ({
@@ -34,13 +45,112 @@ export const Route = createFileRoute("/driver/request/$id")({
       { property: "og:description", content: "Real-time pod progress and repair status." },
     ],
   }),
-  component: RequestTracking,
+  component: () => (
+    <ProtectedRoute allowedRoles={["DRIVER", "MECHANIC", "STATION_OPERATOR", "ADMIN", "SUPER_ADMIN"]}>
+      <RequestTracking />
+    </ProtectedRoute>
+  ),
 });
 
 function RequestTracking() {
   const { id } = Route.useParams();
-  const { emergencies, stations, pods, buttons, mechanics, decideRepair } = useRoadRescue();
-  const emergency = emergencies.find((e) => e.id === id);
+  const { emergencies: localEmergencies, stations, pods, buttons, mechanics, decideRepair: localDecideRepair } = useRoadRescue();
+  const { user } = useAuth();
+
+  const [dbEmergency, setDbEmergency] = React.useState<EmergencyRequestRow | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  // 1. Check local store emergency first
+  const localEmergency = localEmergencies.find((e) => e.id === id);
+
+  // 2. Fetch & Subscribe to Supabase request if present
+  React.useEffect(() => {
+    let active = true;
+
+    async function loadDbRequest() {
+      try {
+        const row = await fetchEmergencyRequestById(id);
+        if (active && row) {
+          setDbEmergency(row);
+        }
+      } catch (err) {
+        console.warn('Error fetching DB emergency:', err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadDbRequest();
+
+    // Set up Realtime subscription for live status changes
+    const channel = supabase
+      .channel(`request-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'emergency_requests',
+          filter: `id=eq.${id}`,
+        },
+        (payload) => {
+          if (active && payload.new) {
+            setDbEmergency(payload.new as EmergencyRequestRow);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
+  }, [id]);
+
+  // Combine DB & Local emergency state
+  const emergency = React.useMemo(() => {
+    if (localEmergency) return localEmergency;
+    if (!dbEmergency) return null;
+
+    const createdAt = new Date(dbEmergency.created_at).getTime();
+    const updatedAt = new Date(dbEmergency.updated_at).getTime();
+    const stage = (dbEmergency.stage ?? dbEmergency.status ?? 'CREATED') as Stage;
+
+    return {
+      id: dbEmergency.id,
+      createdAt,
+      updatedAt,
+      stage,
+      problemType: dbEmergency.problem_type as any,
+      vehicleLabel: dbEmergency.vehicle_label,
+      buttonId: dbEmergency.button_id,
+      km: dbEmergency.km,
+      lat: dbEmergency.lat,
+      lng: dbEmergency.lng,
+      stationId: dbEmergency.station_id,
+      podId: dbEmergency.pod_id,
+      mechanicId: dbEmergency.mechanic_id,
+      podProgress: dbEmergency.pod_progress ?? 0,
+      distanceKm: dbEmergency.distance_km ?? 0,
+      etaMin: dbEmergency.eta_min ?? 0,
+      paid: dbEmergency.paid ?? false,
+      amount: dbEmergency.amount ?? 99,
+      kitUnlocked: dbEmergency.kit_unlocked ?? false,
+      source: (dbEmergency.source ?? 'APP') as any,
+      timeline: (dbEmergency.timeline as any) ?? [{ stage, at: createdAt }],
+      nextAt: null,
+      mechanicProgress: dbEmergency.mechanic_progress ?? 0,
+      driverName: dbEmergency.driver_name,
+    };
+  }, [localEmergency, dbEmergency]);
+
+  if (loading && !localEmergency && !dbEmergency) {
+    return (
+      <AppShell title="Loading request..." subtitle="Fetching rescue data">
+        <div className="p-8 text-center text-muted-foreground">Loading emergency details...</div>
+      </AppShell>
+    );
+  }
 
   if (!emergency) {
     return (
@@ -52,10 +162,50 @@ function RequestTracking() {
     );
   }
 
+  // Enforce driver ownership: Drivers can only view their own requests or demo requests
+  const isDemo = emergency.source === "DEMO" || emergency.id.startsWith("REQ-10") || emergency.id.startsWith("DEMO");
+  const isDriverOwner = user ? (dbEmergency?.driver_id === user.id || emergency.driverName === user.full_name || emergency.driverName === user.email?.split("@")[0]) : false;
+  const isAuthorizedStaff = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" || user?.role === "MECHANIC" || user?.role === "STATION_OPERATOR";
+
+  if (!isDemo && !isAuthorizedStaff && user?.role === "DRIVER" && dbEmergency && !isDriverOwner) {
+    return (
+      <AppShell title="Access Denied" subtitle="Private Rescue Request">
+        <div className="mx-auto max-w-md rounded-xl border border-emergency/30 bg-emergency/5 p-6 text-center space-y-4">
+          <p className="text-sm font-semibold text-emergency">
+            This emergency request belongs to another driver account.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            For privacy and security, you can only track rescue operations associated with your account.
+          </p>
+          <Button asChild className="bg-emergency text-emergency-foreground hover:bg-emergency/90">
+            <Link to="/driver">Back to my dashboard</Link>
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
+
   const pod = pods.find((p) => p.id === emergency.podId);
   const station = stations.find((s) => s.id === emergency.stationId);
   const mechanic = mechanics.find((m) => m.id === emergency.mechanicId);
   const problem = PROBLEM_TYPES.find((p) => p.id === emergency.problemType);
+
+  const handleDecideRepair = async (repaired: boolean) => {
+    if (localEmergency) {
+      localDecideRepair(emergency.id, repaired);
+    }
+    if (dbEmergency) {
+      if (repaired) {
+        await advanceEmergencyStage(emergency.id, "REPAIR_SUCCESSFUL");
+        setTimeout(async () => {
+          await advanceEmergencyStage(emergency.id, "COMPLETED");
+        }, 1500);
+      } else {
+        await advanceEmergencyStage(emergency.id, "UNABLE_TO_REPAIR");
+        await assignEmergencyMechanic(emergency.id);
+      }
+    }
+  };
 
   return (
     <AppShell
@@ -143,7 +293,7 @@ function RequestTracking() {
                   size="lg"
                   className="h-14 bg-success text-success-foreground hover:bg-success/90"
                   onClick={() => {
-                    decideRepair(emergency.id, true);
+                    handleDecideRepair(true);
                     toast.success("Great — closing your rescue");
                   }}
                 >
@@ -154,7 +304,7 @@ function RequestTracking() {
                   variant="outline"
                   className="h-14 border-emergency/40 text-emergency hover:bg-emergency/10"
                   onClick={() => {
-                    decideRepair(emergency.id, false);
+                    handleDecideRepair(false);
                     toast("Finding a verified mechanic near you");
                   }}
                 >
@@ -254,3 +404,4 @@ function Telemetry({
     </div>
   );
 }
+

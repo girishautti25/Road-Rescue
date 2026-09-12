@@ -15,6 +15,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminButtonsRouteImport } from './routes/admin.buttons'
@@ -25,6 +27,7 @@ import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as DriverEmergencyRouteImport } from './routes/driver.emergency'
 import { Route as KitAccessPodIdRouteImport } from './routes/kit-access.$podId'
 import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
+import { Route as StationIndexRouteImport } from './routes/station.index'
 import { Route as DriverRequestIdRouteImport } from './routes/driver.request.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -55,6 +58,16 @@ const DemoRoute = DemoRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -107,6 +120,11 @@ const MechanicIndexRoute = MechanicIndexRouteImport.update({
   path: '/mechanic/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StationIndexRoute = StationIndexRouteImport.update({
+  id: '/station/',
+  path: '/station/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DriverRequestIdRoute = DriverRequestIdRouteImport.update({
   id: '/driver/request/$id',
   path: '/driver/request/$id',
@@ -120,6 +138,8 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/buttons': typeof AdminButtonsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
@@ -130,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/driver/': typeof DriverIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
+  '/station/': typeof StationIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesByTo {
@@ -138,6 +159,8 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/buttons': typeof AdminButtonsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
@@ -148,6 +171,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/driver': typeof DriverIndexRoute
   '/mechanic': typeof MechanicIndexRoute
+  '/station': typeof StationIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesById {
@@ -158,6 +182,8 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/buttons': typeof AdminButtonsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
@@ -168,6 +194,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/driver/': typeof DriverIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
+  '/station/': typeof StationIndexRoute
   '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRouteTypes {
@@ -179,6 +206,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/demo'
     | '/how-it-works'
+    | '/login'
+    | '/signup'
     | '/admin/analytics'
     | '/admin/buttons'
     | '/admin/mechanics'
@@ -189,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/driver/'
     | '/mechanic/'
+    | '/station/'
     | '/driver/request/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -197,6 +227,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/demo'
     | '/how-it-works'
+    | '/login'
+    | '/signup'
     | '/admin/analytics'
     | '/admin/buttons'
     | '/admin/mechanics'
@@ -207,6 +239,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/driver'
     | '/mechanic'
+    | '/station'
     | '/driver/request/$id'
   id:
     | '__root__'
@@ -216,6 +249,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/demo'
     | '/how-it-works'
+    | '/login'
+    | '/signup'
     | '/admin/analytics'
     | '/admin/buttons'
     | '/admin/mechanics'
@@ -226,6 +261,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/driver/'
     | '/mechanic/'
+    | '/station/'
     | '/driver/request/$id'
   fileRoutesById: FileRoutesById
 }
@@ -236,10 +272,13 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DemoRoute: typeof DemoRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
   DriverEmergencyRoute: typeof DriverEmergencyRoute
   KitAccessPodIdRoute: typeof KitAccessPodIdRoute
   DriverIndexRoute: typeof DriverIndexRoute
   MechanicIndexRoute: typeof MechanicIndexRoute
+  StationIndexRoute: typeof StationIndexRoute
   DriverRequestIdRoute: typeof DriverRequestIdRoute
 }
 
@@ -285,6 +324,20 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -357,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MechanicIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/station/': {
+      id: '/station/'
+      path: '/station'
+      fullPath: '/station/'
+      preLoaderRoute: typeof StationIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/driver/request/$id': {
       id: '/driver/request/$id'
       path: '/driver/request/$id'
@@ -394,18 +454,21 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DemoRoute: DemoRoute,
   HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
   DriverEmergencyRoute: DriverEmergencyRoute,
   KitAccessPodIdRoute: KitAccessPodIdRoute,
   DriverIndexRoute: DriverIndexRoute,
   MechanicIndexRoute: MechanicIndexRoute,
+  StationIndexRoute: StationIndexRoute,
   DriverRequestIdRoute: DriverRequestIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
+import type { getRouter } from '../../../../../.gemini/antigravity-ide/scratch/road-rescue/src/router.tsx'
+import type { startInstance } from '../../../../../.gemini/antigravity-ide/scratch/road-rescue/src/start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true

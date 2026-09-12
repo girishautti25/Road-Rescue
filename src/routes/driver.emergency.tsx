@@ -10,8 +10,20 @@ import { AppShell } from "@/components/rr/Shell";
 import { useRoadRescue } from "@/lib/roadrescue/store";
 import { PROBLEM_TYPES, type ProblemTypeId } from "@/lib/roadrescue/types";
 import { cn } from "@/lib/utils";
+import { kmToLatLng } from "@/lib/roadrescue/seed";
+import { useAuth } from "@/context/AuthContext";
+import {
+  getOrCreateDriverProfile,
+  fetchDriverVehicles,
+  createSupabaseEmergencyRequest,
+  dispatchEmergencyPod,
+  assignEmergencyMechanic,
+  type DriverProfile,
+} from "@/services/driverService";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export const Route = createFileRoute("/driver/emergency")({
+
   head: () => ({
     meta: [
       { title: "Get Emergency Help — ROADRESCUE" },
@@ -24,19 +36,57 @@ export const Route = createFileRoute("/driver/emergency")({
       { property: "og:description", content: "One-tap highway breakdown dispatch." },
     ],
   }),
-  component: EmergencyPage,
+  component: () => (
+    <ProtectedRoute allowedRoles={["DRIVER", "ADMIN", "SUPER_ADMIN"]}>
+      <EmergencyPage />
+    </ProtectedRoute>
+  ),
 });
 
 function EmergencyPage() {
-  const { vehicles, buttons, createEmergency } = useRoadRescue();
+  const { vehicles: localVehicles, buttons, createEmergency } = useRoadRescue();
+  const { user } = useAuth();
   const navigate = useNavigate();
+
   const [problem, setProblem] = React.useState<ProblemTypeId>("TYRE_PUNCTURE");
-  const [vehicle, setVehicle] = React.useState(vehicles[0]);
+  const [driverProfile, setDriverProfile] = React.useState<DriverProfile | null>(null);
+  const [vehicles, setVehicles] = React.useState<Array<{ id: string; label: string; plate: string }>>(localVehicles);
+  const [vehicle, setVehicle] = React.useState<{ id: string; label: string; plate: string } | null>(null);
   const [buttonId, setButtonId] = React.useState("B-027");
   const [useGps, setUseGps] = React.useState(false);
   const [gpsKm, setGpsKm] = React.useState<number | null>(null);
   const [locating, setLocating] = React.useState(false);
   const [dispatching, setDispatching] = React.useState(false);
+
+  React.useEffect(() => {
+    let active = true;
+    async function loadDriverData() {
+      if (!user) return;
+      try {
+        const profile = await getOrCreateDriverProfile(user.id, user.email);
+        if (!active) return;
+        setDriverProfile(profile);
+        const dbVehicles = await fetchDriverVehicles(profile.id);
+        if (!active) return;
+        if (dbVehicles.length > 0) {
+          setVehicles(dbVehicles);
+          setVehicle(dbVehicles[0] ?? null);
+        } else {
+          setVehicle(localVehicles[0] ?? null);
+        }
+      } catch (err: unknown) {
+        console.warn('Failed to load driver profile/vehicles:', err);
+      }
+    }
+    loadDriverData();
+    return () => { active = false; };
+  }, [user, localVehicles]);
+
+  React.useEffect(() => {
+    if (!vehicle && localVehicles.length > 0) {
+      setVehicle(localVehicles[0] ?? null);
+    }
+  }, [localVehicles, vehicle]);
 
   const matchedButton = buttons.find((b) => b.id === buttonId.trim().toUpperCase());
 
@@ -51,7 +101,7 @@ function EmergencyPage() {
     }, 1200);
   }
 
-  function dispatch() {
+  async function dispatch() {
     if (!vehicle) {
       toast.error("Add a vehicle first");
       return;
@@ -61,14 +111,63 @@ function EmergencyPage() {
       return;
     }
     setDispatching(true);
-    const id = createEmergency({
-      problemType: problem,
-      vehicleLabel: `${vehicle.label} · ${vehicle.plate}`,
-      buttonId: useGps ? null : matchedButton!.id,
-      ...(useGps ? { km: gpsKm ?? 16.2 } : {}),
-    });
-    toast.success("Emergency created", { description: "Control room notified. Tracking your rescue." });
-    setTimeout(() => navigate({ to: "/driver/request/$id", params: { id } }), 400);
+
+    const km = useGps ? (gpsKm ?? 16.2) : matchedButton!.km;
+    const coords = kmToLatLng ? kmToLatLng(km) : { lat: 12.9 + km * 0.009, lng: 77.6 + km * 0.004 };
+    const vehicleLabel = `${vehicle.label} · ${vehicle.plate}`;
+
+    try {
+      let createdId: string;
+
+      if (user && driverProfile) {
+        // Persist to Supabase
+        const dbReq = await createSupabaseEmergencyRequest({
+          driverId: driverProfile.id,
+          driverName: driverProfile.name,
+          vehicleLabel,
+          vehicleId: vehicle.id.includes('-') ? vehicle.id : null,
+          problemType: problem,
+          buttonId: useGps ? null : matchedButton!.id,
+          km,
+          lat: coords.lat,
+          lng: coords.lng,
+          source: 'APP',
+        });
+        createdId = dbReq.id;
+
+        // Atomically match and dispatch pod via RPC
+        const dispatchRes = await dispatchEmergencyPod(createdId);
+        if (!dispatchRes.success) {
+          // If no pod available, trigger mechanic assignment fallback
+          await assignEmergencyMechanic(createdId);
+        }
+
+        // Also register in local store state machine so real-time simulation progresses
+        createEmergency({
+          problemType: problem,
+          vehicleLabel,
+          buttonId: useGps ? null : matchedButton!.id,
+          km,
+          source: 'APP',
+        });
+      } else {
+        // Local state mode
+        createdId = createEmergency({
+          problemType: problem,
+          vehicleLabel,
+          buttonId: useGps ? null : matchedButton!.id,
+          km,
+          source: 'APP',
+        });
+      }
+
+      toast.success("Emergency created", { description: "Control room notified. Tracking your rescue." });
+      setTimeout(() => navigate({ to: "/driver/request/$id", params: { id: createdId } }), 400);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Dispatch failed';
+      toast.error('Failed to create emergency request', { description: msg });
+      setDispatching(false);
+    }
   }
 
   return (
@@ -202,3 +301,4 @@ function EmergencyPage() {
     </AppShell>
   );
 }
+

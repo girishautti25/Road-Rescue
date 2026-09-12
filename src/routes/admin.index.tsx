@@ -2,6 +2,7 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Activity, Radio, TrainFront, Users, Warehouse } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HighwayMap } from "@/components/rr/HighwayMap";
 import { StageBadge } from "@/components/rr/StageStepper";
@@ -22,7 +23,11 @@ export const Route = createFileRoute("/admin/")({
       { property: "og:description", content: "Live corridor operations dashboard." },
     ],
   }),
-  component: AdminOverview,
+  component: () => (
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <AdminOverview />
+    </ProtectedRoute>
+  ),
 });
 
 const FILTERS = ["All", "Active", "Pod phase", "Mechanic phase", "Completed"] as const;

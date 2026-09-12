@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from '@/context/AuthContext';
 import {
   Outlet,
   Link,
@@ -134,11 +135,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RoadRescueProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <Toaster position="top-center" richColors />
-      </RoadRescueProvider>
+      <AuthProvider>
+        <RoadRescueProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <Toaster position="top-center" richColors />
+        </RoadRescueProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
