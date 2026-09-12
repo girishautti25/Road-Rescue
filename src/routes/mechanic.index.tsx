@@ -56,7 +56,7 @@ function MechanicPortal() {
         ),
     ) ?? null;
 
-  const me = mechanics.find((m) => m.id === job?.mechanicId) ?? mechanics[3];
+  const me = mechanics.find((m) => m.id === job?.mechanicId) ?? mechanics[3]!;
   const problem = PROBLEM_TYPES.find((p) => p.id === job?.problemType);
   const completed = emergencies.filter((e) => e.stage === "COMPLETED" && e.mechanicId === me.id);
 

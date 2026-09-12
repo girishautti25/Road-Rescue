@@ -9,7 +9,7 @@ import { AppShell } from "@/components/rr/Shell";
 import { useRoadRescue } from "@/lib/roadrescue/store";
 
 export const Route = createFileRoute("/kit-access/$podId")({
-  validateSearch: (search: Record<string, unknown>) => ({ req: String(search.req ?? "") }),
+  validateSearch: (search: Record<string, unknown>) => ({ req: String(search["req"] ?? "") }),
   head: () => ({
     meta: [
       { title: "Unlock Rescue Kit — ROADRESCUE" },

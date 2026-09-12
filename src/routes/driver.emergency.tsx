@@ -52,14 +52,20 @@ function EmergencyPage() {
   }
 
   function dispatch() {
-    if (!vehicle) return toast.error("Add a vehicle first");
-    if (!useGps && !matchedButton) return toast.error("Enter a valid button ID like B-027");
+    if (!vehicle) {
+      toast.error("Add a vehicle first");
+      return;
+    }
+    if (!useGps && !matchedButton) {
+      toast.error("Enter a valid button ID like B-027");
+      return;
+    }
     setDispatching(true);
     const id = createEmergency({
       problemType: problem,
       vehicleLabel: `${vehicle.label} · ${vehicle.plate}`,
       buttonId: useGps ? null : matchedButton!.id,
-      km: useGps ? (gpsKm ?? 16.2) : undefined,
+      ...(useGps ? { km: gpsKm ?? 16.2 } : {}),
     });
     toast.success("Emergency created", { description: "Control room notified. Tracking your rescue." });
     setTimeout(() => navigate({ to: "/driver/request/$id", params: { id } }), 400);

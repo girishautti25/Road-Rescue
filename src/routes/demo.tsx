@@ -87,6 +87,7 @@ function DemoPage() {
       }, 2200);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [auto, emergency, payAndUnlock, unlockKit, decideRepair]);
 
   const stageIndex = (() => {
