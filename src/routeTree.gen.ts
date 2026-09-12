@@ -15,6 +15,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as DriverEmergencyRouteImport } from './routes/driver.emergency'
+import { Route as KitAccessPodIdRouteImport } from './routes/kit-access.$podId'
+import { Route as DriverRequestIdRouteImport } from './routes/driver.request.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +48,16 @@ const DriverEmergencyRoute = DriverEmergencyRouteImport.update({
   path: '/driver/emergency',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KitAccessPodIdRoute = KitAccessPodIdRouteImport.update({
+  id: '/kit-access/$podId',
+  path: '/kit-access/$podId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRequestIdRoute = DriverRequestIdRouteImport.update({
+  id: '/driver/request/$id',
+  path: '/driver/request/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,7 +65,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver/': typeof DriverIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,7 +75,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver': typeof DriverIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,7 +86,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
   '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
   '/driver/': typeof DriverIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,7 +98,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/how-it-works'
     | '/driver/emergency'
+    | '/kit-access/$podId'
     | '/driver/'
+    | '/driver/request/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -88,7 +108,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/how-it-works'
     | '/driver/emergency'
+    | '/kit-access/$podId'
     | '/driver'
+    | '/driver/request/$id'
   id:
     | '__root__'
     | '/'
@@ -96,7 +118,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/how-it-works'
     | '/driver/emergency'
+    | '/kit-access/$podId'
     | '/driver/'
+    | '/driver/request/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,7 +129,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   HowItWorksRoute: typeof HowItWorksRoute
   DriverEmergencyRoute: typeof DriverEmergencyRoute
+  KitAccessPodIdRoute: typeof KitAccessPodIdRoute
   DriverIndexRoute: typeof DriverIndexRoute
+  DriverRequestIdRoute: typeof DriverRequestIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +178,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DriverEmergencyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kit-access/$podId': {
+      id: '/kit-access/$podId'
+      path: '/kit-access/$podId'
+      fullPath: '/kit-access/$podId'
+      preLoaderRoute: typeof KitAccessPodIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver/request/$id': {
+      id: '/driver/request/$id'
+      path: '/driver/request/$id'
+      fullPath: '/driver/request/$id'
+      preLoaderRoute: typeof DriverRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -161,7 +201,9 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   HowItWorksRoute: HowItWorksRoute,
   DriverEmergencyRoute: DriverEmergencyRoute,
+  KitAccessPodIdRoute: KitAccessPodIdRoute,
   DriverIndexRoute: DriverIndexRoute,
+  DriverRequestIdRoute: DriverRequestIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
