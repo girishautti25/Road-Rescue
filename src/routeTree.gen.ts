@@ -10,33 +10,237 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
+import { Route as AdminButtonsRouteImport } from './routes/admin.buttons'
+import { Route as AdminMechanicsRouteImport } from './routes/admin.mechanics'
+import { Route as AdminPodsRouteImport } from './routes/admin.pods'
+import { Route as AdminStationsRouteImport } from './routes/admin.stations'
+import { Route as DriverIndexRouteImport } from './routes/driver.index'
+import { Route as DriverEmergencyRouteImport } from './routes/driver.emergency'
+import { Route as KitAccessPodIdRouteImport } from './routes/kit-access.$podId'
+import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
+import { Route as DriverRequestIdRouteImport } from './routes/driver.request.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminButtonsRoute = AdminButtonsRouteImport.update({
+  id: '/buttons',
+  path: '/buttons',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMechanicsRoute = AdminMechanicsRouteImport.update({
+  id: '/mechanics',
+  path: '/mechanics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPodsRoute = AdminPodsRouteImport.update({
+  id: '/pods',
+  path: '/pods',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminStationsRoute = AdminStationsRouteImport.update({
+  id: '/stations',
+  path: '/stations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const DriverIndexRoute = DriverIndexRouteImport.update({
+  id: '/driver/',
+  path: '/driver/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverEmergencyRoute = DriverEmergencyRouteImport.update({
+  id: '/driver/emergency',
+  path: '/driver/emergency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KitAccessPodIdRoute = KitAccessPodIdRouteImport.update({
+  id: '/kit-access/$podId',
+  path: '/kit-access/$podId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MechanicIndexRoute = MechanicIndexRouteImport.update({
+  id: '/mechanic/',
+  path: '/mechanic/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRequestIdRoute = DriverRequestIdRouteImport.update({
+  id: '/driver/request/$id',
+  path: '/driver/request/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/buttons': typeof AdminButtonsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/pods': typeof AdminPodsRoute
+  '/admin/stations': typeof AdminStationsRoute
+  '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/driver/': typeof DriverIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/buttons': typeof AdminButtonsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/pods': typeof AdminPodsRoute
+  '/admin/stations': typeof AdminStationsRoute
+  '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
+  '/admin': typeof AdminIndexRoute
+  '/driver': typeof DriverIndexRoute
+  '/mechanic': typeof MechanicIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/buttons': typeof AdminButtonsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/pods': typeof AdminPodsRoute
+  '/admin/stations': typeof AdminStationsRoute
+  '/driver/emergency': typeof DriverEmergencyRoute
+  '/kit-access/$podId': typeof KitAccessPodIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/driver/': typeof DriverIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
+  '/driver/request/$id': typeof DriverRequestIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/contact'
+    | '/demo'
+    | '/how-it-works'
+    | '/admin/analytics'
+    | '/admin/buttons'
+    | '/admin/mechanics'
+    | '/admin/pods'
+    | '/admin/stations'
+    | '/driver/emergency'
+    | '/kit-access/$podId'
+    | '/admin/'
+    | '/driver/'
+    | '/mechanic/'
+    | '/driver/request/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/demo'
+    | '/how-it-works'
+    | '/admin/analytics'
+    | '/admin/buttons'
+    | '/admin/mechanics'
+    | '/admin/pods'
+    | '/admin/stations'
+    | '/driver/emergency'
+    | '/kit-access/$podId'
+    | '/admin'
+    | '/driver'
+    | '/mechanic'
+    | '/driver/request/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/contact'
+    | '/demo'
+    | '/how-it-works'
+    | '/admin/analytics'
+    | '/admin/buttons'
+    | '/admin/mechanics'
+    | '/admin/pods'
+    | '/admin/stations'
+    | '/driver/emergency'
+    | '/kit-access/$podId'
+    | '/admin/'
+    | '/driver/'
+    | '/mechanic/'
+    | '/driver/request/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  DemoRoute: typeof DemoRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  DriverEmergencyRoute: typeof DriverEmergencyRoute
+  KitAccessPodIdRoute: typeof KitAccessPodIdRoute
+  DriverIndexRoute: typeof DriverIndexRoute
+  MechanicIndexRoute: typeof MechanicIndexRoute
+  DriverRequestIdRoute: typeof DriverRequestIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +252,153 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/buttons': {
+      id: '/admin/buttons'
+      path: '/buttons'
+      fullPath: '/admin/buttons'
+      preLoaderRoute: typeof AdminButtonsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mechanics': {
+      id: '/admin/mechanics'
+      path: '/mechanics'
+      fullPath: '/admin/mechanics'
+      preLoaderRoute: typeof AdminMechanicsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pods': {
+      id: '/admin/pods'
+      path: '/pods'
+      fullPath: '/admin/pods'
+      preLoaderRoute: typeof AdminPodsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/stations': {
+      id: '/admin/stations'
+      path: '/stations'
+      fullPath: '/admin/stations'
+      preLoaderRoute: typeof AdminStationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/driver/': {
+      id: '/driver/'
+      path: '/driver'
+      fullPath: '/driver/'
+      preLoaderRoute: typeof DriverIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver/emergency': {
+      id: '/driver/emergency'
+      path: '/driver/emergency'
+      fullPath: '/driver/emergency'
+      preLoaderRoute: typeof DriverEmergencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kit-access/$podId': {
+      id: '/kit-access/$podId'
+      path: '/kit-access/$podId'
+      fullPath: '/kit-access/$podId'
+      preLoaderRoute: typeof KitAccessPodIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mechanic/': {
+      id: '/mechanic/'
+      path: '/mechanic'
+      fullPath: '/mechanic/'
+      preLoaderRoute: typeof MechanicIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver/request/$id': {
+      id: '/driver/request/$id'
+      path: '/driver/request/$id'
+      fullPath: '/driver/request/$id'
+      preLoaderRoute: typeof DriverRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminButtonsRoute: typeof AdminButtonsRoute
+  AdminMechanicsRoute: typeof AdminMechanicsRoute
+  AdminPodsRoute: typeof AdminPodsRoute
+  AdminStationsRoute: typeof AdminStationsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminButtonsRoute: AdminButtonsRoute,
+  AdminMechanicsRoute: AdminMechanicsRoute,
+  AdminPodsRoute: AdminPodsRoute,
+  AdminStationsRoute: AdminStationsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
+  ContactRoute: ContactRoute,
+  DemoRoute: DemoRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  DriverEmergencyRoute: DriverEmergencyRoute,
+  KitAccessPodIdRoute: KitAccessPodIdRoute,
+  DriverIndexRoute: DriverIndexRoute,
+  MechanicIndexRoute: MechanicIndexRoute,
+  DriverRequestIdRoute: DriverRequestIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
