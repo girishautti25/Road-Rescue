@@ -467,8 +467,8 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from '../../../../../.gemini/antigravity-ide/scratch/road-rescue/src/router.tsx'
-import type { startInstance } from '../../../../../.gemini/antigravity-ide/scratch/road-rescue/src/start.ts'
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
