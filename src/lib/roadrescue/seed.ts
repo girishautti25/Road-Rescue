@@ -83,7 +83,7 @@ export const MECHANICS: Mechanic[] = NAMES.map((name, i) => ({
   phone: `+91 9${String(800000000 + i * 1234567).slice(0, 9)}`,
   rating: Number((4.9 - (i % 5) * 0.18).toFixed(1)),
   jobs: 40 + ((i * 37) % 260),
-  skills: SKILLS[i % SKILLS.length],
+  skills: SKILLS[i % SKILLS.length]!,
   km: Number((2 + i * 2.9).toFixed(1)),
   available: i !== 2 && i !== 7,
   earnings: 4200 + ((i * 977) % 9000),

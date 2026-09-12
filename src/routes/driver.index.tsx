@@ -48,19 +48,19 @@ function DriverHome() {
         </Button>
       }
     >
-      {activeEmergencies.length > 0 && (
+      {activeEmergencies[0] && (
         <Card className="mb-6 border-emergency/40 bg-emergency/5">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
             <div>
               <p className="text-sm font-semibold text-emergency">Active rescue in progress</p>
               <p className="text-sm text-muted-foreground">
-                {activeEmergencies[0].id} · {activeEmergencies[0].vehicleLabel}
+                {activeEmergencies[0]!.id} · {activeEmergencies[0]!.vehicleLabel}
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <StageBadge stage={activeEmergencies[0].stage} />
+              <StageBadge stage={activeEmergencies[0]!.stage} />
               <Button asChild size="sm">
-                <Link to="/driver/request/$id" params={{ id: activeEmergencies[0].id }}>
+                <Link to="/driver/request/$id" params={{ id: activeEmergencies[0]!.id }}>
                   Track live
                 </Link>
               </Button>
@@ -109,7 +109,10 @@ function DriverHome() {
               <Button
                 className="w-full"
                 onClick={() => {
-                  if (!label || !plate) return toast.error("Add model and plate number");
+                  if (!label || !plate) {
+                    toast.error("Add model and plate number");
+                    return;
+                  }
                   addVehicle({ id: `v${Date.now()}`, label, plate, type: "Car" });
                   setLabel("");
                   setPlate("");
@@ -149,7 +152,10 @@ function DriverHome() {
               <Button
                 className="w-full"
                 onClick={() => {
-                  if (!cName || !cPhone) return toast.error("Add name and phone");
+                  if (!cName || !cPhone) {
+                    toast.error("Add name and phone");
+                    return;
+                  }
                   addContact({ id: `c${Date.now()}`, name: cName, relation: "Contact", phone: cPhone });
                   setCName("");
                   setCPhone("");
